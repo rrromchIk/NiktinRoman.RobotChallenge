@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace rom4ik.RobotChallange {
     public class Rom4ikAlgorithm : IRobotAlgorithm {
-        private int _roundNumber = 0;
+        public static int RoundNumber = 0;
         private EnergyStationsUtil energyStationsUtil;
         private MapUtil mapUtil;
         private DistanceHelper distanceHelper;
@@ -17,7 +17,7 @@ namespace rom4ik.RobotChallange {
         }
 
         public Rom4ikAlgorithm() {
-            Logger.OnLogRound += (object sender, LogRoundEventArgs e) => { _roundNumber += 1; };
+            Logger.OnLogRound += (object sender, LogRoundEventArgs e) => { Rom4ikAlgorithm.RoundNumber += 1; };
             mapUtil = new MapUtil();
             distanceHelper = new DistanceHelper();
             energyStationsUtil = new EnergyStationsUtil(distanceHelper, mapUtil);
@@ -27,37 +27,40 @@ namespace rom4ik.RobotChallange {
             var myRobot = robots[robotToMoveIndex];
             Position topOneEnergyStationPosition = null;
 
-            if (energyStationsUtil.IsRobotOnTheStation(map.Stations.ToList(), myRobot)) {
-                Console.WriteLine("Robot is already on station");
+            if (energyStationsUtil.IsRobotOnTheStation(map.Stations, myRobot)) {
+                //If robot is on station
+
+
+                //By default just collecting
                 return new CollectEnergyCommand();
             } else {
-                Console.WriteLine("Robot is not on station");
-
-                List<EnergyStation> stationsInRadius = energyStationsUtil.FindAllReachableStationsInGivenRadius(
+                //If robot is not on station
+                //Searching all reachable stations
+                IList<EnergyStation> stationsInRadius = energyStationsUtil.FindAllReachableStationsInGivenRadius(
                                                                                 map,
                                                                                 myRobot.Energy,
                                                                                 myRobot,
-                                                                                robots.ToList());
-                List<EnergyStation> topStations = energyStationsUtil.SortEnergyStationsByEnergyProfit(
+                                                                                robots);
+
+                //Sorting by energy profit
+                IList<EnergyStation> topStations = energyStationsUtil.SortEnergyStationsByEnergyProfit(
                                                                                 stationsInRadius,
-                                                                                robots.ToList(),
+                                                                                robots,
                                                                                 myRobot,
                                                                                 myRobot.Position);
 
-                if (topStations.Count == 0) {
+                //Filter to not kick our robot
+                IList<EnergyStation> filteredStations = energyStationsUtil.FilterStationsOccupiedByMyOwnRobots(topStations, myRobot, robots);
+                
+                if (filteredStations.Count == 0) {
                     Console.WriteLine("No stations in reachable radius");
                     return new MoveCommand() {
                         NewPosition = new Position(myRobot.Position.X + 1, myRobot.Position.Y + 1)
                     };
                 }
 
-
-                foreach (EnergyStation station in topStations) {
-                    if (!energyStationsUtil.IsStationOccupiedByOwnRobot(station, myRobot, robots.ToList())) {
-                        topOneEnergyStationPosition = station.Position;
-                        break;
-                    }
-                }
+             
+                topOneEnergyStationPosition = filteredStations[0].Position;
             }
 
             return new MoveCommand() { NewPosition = topOneEnergyStationPosition }; 

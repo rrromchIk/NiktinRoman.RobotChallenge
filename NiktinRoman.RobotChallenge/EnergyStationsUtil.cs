@@ -1,9 +1,7 @@
 ﻿using Robot.Common;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace NikitinRoman.RobotChallenge {
     public class EnergyStationsUtil {
@@ -15,8 +13,8 @@ namespace NikitinRoman.RobotChallenge {
             this.mapUtil = mapUtil;
         }
         
-        public List<EnergyStation> FindAllReachableStationsInGivenRadius(Map map, int radius,
-                        Robot.Common.Robot movingRobot, List<Robot.Common.Robot> robots) {
+        public IList<EnergyStation> FindAllReachableStationsInGivenRadius(Map map, int radius,
+                        Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots) {
 
             Position currentPosition = movingRobot.Position;
             IList<EnergyStation> allEnergyStations = map.Stations;
@@ -37,16 +35,21 @@ namespace NikitinRoman.RobotChallenge {
                 }
             }
 
-            return energyStationsInGivenRadius.ToList();
+            return energyStationsInGivenRadius;
         }
 
 
-        //public List<EnergyStations> FilterStationsOccupiedByMyOwnRobots() {
+        public IList<EnergyStation> FilterStationsOccupiedByMyOwnRobots(IList<EnergyStation> energyStations,
+                                                                        Robot.Common.Robot movingRobot,
+                                                                        IList<Robot.Common.Robot> robots) {
+            return energyStations
+                .Select(s => s)
+                .Where(s => !IsStationOccupiedByOwnRobot(s, movingRobot, robots))
+                .ToList();
+        }
 
-        //}
-
-        public List<EnergyStation> SortEnergyStationsByEnergyProfit(List<EnergyStation> energyStations,
-                                                                     List<Robot.Common.Robot> robots,
+        public IList<EnergyStation> SortEnergyStationsByEnergyProfit(IList<EnergyStation> energyStations,
+                                                                     IList<Robot.Common.Robot> robots,
                                                                      Robot.Common.Robot movingRobot,
                                                                     Position currentPosition) {
 
@@ -73,7 +76,7 @@ namespace NikitinRoman.RobotChallenge {
         }
 
         public Position FindNearestFreeStation(Robot.Common.Robot movingRobot, Map map,
-                                                    List<Robot.Common.Robot> robots) {
+                                                    IList<Robot.Common.Robot> robots) {
             EnergyStation nearest = null;
             int minDistance = int.MaxValue;
             foreach (var station in map.Stations) {
@@ -89,7 +92,7 @@ namespace NikitinRoman.RobotChallenge {
         }
 
         public bool IsStationOccupiedByOwnRobot(EnergyStation energyStation, Robot.Common.Robot movingRobot,
-            List<Robot.Common.Robot> allRobots) {
+            IList<Robot.Common.Robot> allRobots) {
 
             foreach(Robot.Common.Robot robot in allRobots) {
                 if(movingRobot != robot 
@@ -102,7 +105,7 @@ namespace NikitinRoman.RobotChallenge {
             return false;
          }
 
-        public bool IsRobotOnTheStation(List<EnergyStation> stations, Robot.Common.Robot movingRobot) {
+        public bool IsRobotOnTheStation(IList<EnergyStation> stations, Robot.Common.Robot movingRobot) {
             foreach (EnergyStation energyStation in stations) {
                 if (energyStation.Position == movingRobot.Position)
                     return true;
@@ -111,7 +114,7 @@ namespace NikitinRoman.RobotChallenge {
             return false;
         }
 
-        public bool IsStationFree(EnergyStation station, Robot.Common.Robot movingRobot, List<Robot.Common.Robot> robots) {
+        public bool IsStationFree(EnergyStation station, Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots) {
             return mapUtil.IsCellFree(station.Position, movingRobot, robots);
         }
     }

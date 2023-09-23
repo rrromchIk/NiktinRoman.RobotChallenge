@@ -1,10 +1,6 @@
 ﻿using NikitinRoman.RobotChallenge;
 using Robot.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace RomanNikitin.RobotChallange.Test {
     public class MapUtilTests {
@@ -23,7 +19,7 @@ namespace RomanNikitin.RobotChallange.Test {
             Position movingRobotPosition = new Position(4, 4);
             Robot.Common.Robot movingRobot = new Robot.Common.Robot() { Position = movingRobotPosition };
 
-            List<Robot.Common.Robot> robots = new List<Robot.Common.Robot> {
+            IList<Robot.Common.Robot> robots = new List<Robot.Common.Robot> {
                 movingRobot
             };
 

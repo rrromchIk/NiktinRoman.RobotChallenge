@@ -1,9 +1,5 @@
 ﻿using Robot.Common;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NikitinRoman.RobotChallenge {
     public class MapUtil {
@@ -14,7 +10,7 @@ namespace NikitinRoman.RobotChallenge {
         /// <param name="movingRobot"></param>
         /// <param name="robots"></param>
         /// <returns>True or false</returns>
-        public bool IsCellFree(Position cell, Robot.Common.Robot movingRobot, List<Robot.Common.Robot> robots) {
+        public bool IsCellFree(Position cell, Robot.Common.Robot movingRobot, IList<Robot.Common.Robot> robots) {
             foreach (var robot in robots) {
                 if (robot != movingRobot) {
                     if (robot.Position == cell)

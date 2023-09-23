@@ -1,10 +1,6 @@
 ﻿using NikitinRoman.RobotChallenge;
 using Robot.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace RomanNikitin.RobotChallange.Test {
     public class EnergyStationsUtilTests {
@@ -19,12 +15,12 @@ namespace RomanNikitin.RobotChallange.Test {
             int radius = 9;
             int amountOfStationsInGivenRadius;
             Robot.Common.Robot movingRobot = new Robot.Common.Robot() { Position = new Position(4, 4), Energy = radius };
-            List<EnergyStation> allEnergyStations = PrepareEnergyStationsForPositionAndRadius(movingRobot.Position, radius, out amountOfStationsInGivenRadius);
+            IList<EnergyStation> allEnergyStations = PrepareEnergyStationsForPositionAndRadius(movingRobot.Position, radius, out amountOfStationsInGivenRadius);
 
             Map map = new Map() { Stations = allEnergyStations };
-            List<Robot.Common.Robot> robots = new List<Robot.Common.Robot>() { new Robot.Common.Robot() };
+            IList<Robot.Common.Robot> robots = new List<Robot.Common.Robot>() { new Robot.Common.Robot() };
 
-            List<EnergyStation> expectedEnergyStations =
+            IList<EnergyStation> expectedEnergyStations =
                 energyStationsUtil.FindAllReachableStationsInGivenRadius(map, radius, movingRobot, robots);
 
             Assert.Equal(allEnergyStations.Count, radius * radius);
@@ -43,8 +39,8 @@ namespace RomanNikitin.RobotChallange.Test {
             Assert.Equal(expectedEnergyStations.Count, 28);
         }
 
-        private List<EnergyStation> PrepareEnergyStationsForPositionAndRadius(Position position, int radius, out int amountOfStationsInGivenRadius) { 
-            List<EnergyStation> allEnergyStations = new List<EnergyStation>();
+        private IList<EnergyStation> PrepareEnergyStationsForPositionAndRadius(Position position, int radius, out int amountOfStationsInGivenRadius) { 
+            IList<EnergyStation> allEnergyStations = new List<EnergyStation>();
 
             amountOfStationsInGivenRadius = 0;
             for (int i = 0; i < radius; ++i) {
@@ -63,28 +59,30 @@ namespace RomanNikitin.RobotChallange.Test {
 
         [Fact]
         public void SortEnergyStationsByEnergyProfitMethodTest() {
-
             Position currentPosition = new Position(5, 5);
-            int radius = 16;
+            int radius = 100;
             Robot.Common.Robot movingRobot = new Robot.Common.Robot() { Position = currentPosition, Energy = radius };
 
             List<EnergyStation> energyStations = new List<EnergyStation>();
-            energyStations.Add(new EnergyStation() { Energy = 20, Position = new Position(7, 5), RecoveryRate = 1 });
-            energyStations.Add(new EnergyStation() { Energy = 20, Position = new Position(5, 3), RecoveryRate = 4 });
-            energyStations.Add(new EnergyStation() { Energy = 30, Position = new Position(3, 4), RecoveryRate = 3 });
-            energyStations.Add(new EnergyStation() { Energy = 24, Position = new Position(6, 7), RecoveryRate = 5 });
-            energyStations.Add(new EnergyStation() { Energy = 40, Position = new Position(4, 7), RecoveryRate = 2 });
-            
-            List<Robot.Common.Robot> robots = new List<Robot.Common.Robot>() { movingRobot };
-            List<EnergyStation> expectedSortedStations = energyStationsUtil.SortEnergyStationsByEnergyProfit(energyStations, robots, movingRobot, currentPosition);
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(5, 3), RecoveryRate = 1 });
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(3, 4), RecoveryRate = 4 });
+            energyStations.Add(new EnergyStation() { Energy = 1, Position = new Position(3, 5), RecoveryRate = 3 });
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(4, 7), RecoveryRate = 5 });
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(7, 7), RecoveryRate = 2 });
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(6, 4), RecoveryRate = 2 });
 
-            expectedSortedStations.ForEach(s => { Console.WriteLine("Station {0}, energy - {1}", s.RecoveryRate, s.Energy); });
+            IList<Robot.Common.Robot> robots = new List<Robot.Common.Robot>() { movingRobot };
+            IList<EnergyStation> expectedSortedStations = energyStationsUtil.SortEnergyStationsByEnergyProfit(energyStations, robots, movingRobot, currentPosition);
+
+            foreach(EnergyStation s in expectedSortedStations) {
+                Console.WriteLine("Station {0}, energy - {1}", s.RecoveryRate, s.Energy);
+            }
         }
 
         [Fact]
         public void IsBotOnStationMethodTest() {
             Robot.Common.Robot myRobot = new Robot.Common.Robot() { Position = new Position(4, 4) };
-            List<EnergyStation> energyStations = new List<EnergyStation>();
+            IList<EnergyStation> energyStations = new List<EnergyStation>();
 
             for(int i = 0;  i < 10; i++) {
                 energyStations.Add(new EnergyStation() { Position = new Position(i + 1, i) });
