@@ -7,10 +7,12 @@ namespace NikitinRoman.RobotChallenge {
     public class EnergyStationsUtil {
         private DistanceHelper distanceHelper;
         private MapUtil mapUtil;
+        public readonly int AMOUNT_OF_ENERGY_TO_KICK_OUT_ENEMY_ROBOT;
 
-        public EnergyStationsUtil(DistanceHelper distanceHelper, MapUtil mapUtil) {
+        public EnergyStationsUtil(DistanceHelper distanceHelper, MapUtil mapUtil, int amountOfEnergyToKickOutEnemyRobot) {
             this.distanceHelper = distanceHelper;
             this.mapUtil = mapUtil;
+            this.AMOUNT_OF_ENERGY_TO_KICK_OUT_ENEMY_ROBOT = amountOfEnergyToKickOutEnemyRobot;
         }
         
         public IList<EnergyStation> FindAllReachableStationsInGivenRadius(Map map, int radius,
@@ -50,9 +52,8 @@ namespace NikitinRoman.RobotChallenge {
 
         public IList<EnergyStation> SortEnergyStationsByEnergyProfit(IList<EnergyStation> energyStations,
                                                                      IList<Robot.Common.Robot> robots,
-                                                                     Robot.Common.Robot movingRobot,
-                                                                    Position currentPosition) {
-
+                                                                     Robot.Common.Robot movingRobot) {
+            Position currentPosition = movingRobot.Position;
             var energyStationProfit = energyStations.Select(energyStation => {
                 int amountOfEnergyOnStation = energyStation.Energy;
                 int distanceToStation = distanceHelper.FindDistance(currentPosition, energyStation.Position);
@@ -73,22 +74,6 @@ namespace NikitinRoman.RobotChallenge {
                 .OrderByDescending(kv => kv.Key)
                 .SelectMany(kv => kv)
                 .ToList();
-        }
-
-        public Position FindNearestFreeStation(Robot.Common.Robot movingRobot, Map map,
-                                                    IList<Robot.Common.Robot> robots) {
-            EnergyStation nearest = null;
-            int minDistance = int.MaxValue;
-            foreach (var station in map.Stations) {
-                if (IsStationFree(station, movingRobot, robots)) {
-                    int d = distanceHelper.FindDistance(station.Position, movingRobot.Position);
-                    if (d < minDistance) {
-                        minDistance = d;
-                        nearest = station;
-                    }
-                }
-            }
-            return nearest == null ? null : nearest.Position;
         }
 
         public bool IsStationOccupiedByOwnRobot(EnergyStation energyStation, Robot.Common.Robot movingRobot,

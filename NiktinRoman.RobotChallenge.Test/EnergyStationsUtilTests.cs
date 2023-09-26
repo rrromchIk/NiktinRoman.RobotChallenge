@@ -7,7 +7,7 @@ namespace RomanNikitin.RobotChallange.Test {
         private EnergyStationsUtil energyStationsUtil;
 
         public EnergyStationsUtilTests() {
-            this.energyStationsUtil = new EnergyStationsUtil(new DistanceHelper(), new MapUtil());
+            this.energyStationsUtil = new EnergyStationsUtil(new DistanceHelper(), new MapUtil(), 50);
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace RomanNikitin.RobotChallange.Test {
             energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(6, 4), RecoveryRate = 2 });
 
             IList<Robot.Common.Robot> robots = new List<Robot.Common.Robot>() { movingRobot };
-            IList<EnergyStation> expectedSortedStations = energyStationsUtil.SortEnergyStationsByEnergyProfit(energyStations, robots, movingRobot, currentPosition);
+            IList<EnergyStation> expectedSortedStations = energyStationsUtil.SortEnergyStationsByEnergyProfit(energyStations, robots, movingRobot);
 
             foreach(EnergyStation s in expectedSortedStations) {
                 Console.WriteLine("Station {0}, energy - {1}", s.RecoveryRate, s.Energy);

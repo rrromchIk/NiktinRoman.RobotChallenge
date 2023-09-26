@@ -63,6 +63,7 @@
     <Compile Include="EnergyStationsUtil.cs" />
     <Compile Include="MapUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RobotsUtil.cs" />
     <Compile Include="Rom4ikAlgorithm.cs" />
   </ItemGroup>
   <ItemGroup>
