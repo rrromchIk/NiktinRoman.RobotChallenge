@@ -11,7 +11,7 @@ namespace RomanNikitin.RobotChallange.Test {
         }
 
         [Fact]
-        public void FindAllStationsInGivenRadiusMethodTest() {
+        public void FindAllReachableStationsInGivenRadiusMethodTest() {
             int radius = 9;
             int amountOfStationsInGivenRadius;
             Robot.Common.Robot movingRobot = new Robot.Common.Robot() { Position = new Position(4, 4), Energy = radius };
@@ -132,7 +132,32 @@ namespace RomanNikitin.RobotChallange.Test {
             enemyRobots.Add(new Robot.Common.Robot() { Position = energyStationToBeChecked.Position, OwnerName = robot.OwnerName });
             isOccupied = energyStationsUtil.IsStationOccupiedByOwnRobot(energyStationToBeChecked, robot, enemyRobots);
             Assert.True(isOccupied);
+        }
 
+        [Fact]
+        public void FilterStationsOccupiedByMyOwnRobotsMethodTest() {
+            IList<EnergyStation> energyStations = new List<EnergyStation>();
+            Robot.Common.Robot movingRobot = new Robot.Common.Robot() { Position = new Position(3, 3), OwnerName = "roma" };
+            IList<Robot.Common.Robot> robots = new List<Robot.Common.Robot>();
+
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(5, 3), RecoveryRate = 1 });
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(3, 4), RecoveryRate = 4 });
+            energyStations.Add(new EnergyStation() { Energy = 1, Position = new Position(3, 5), RecoveryRate = 3 });
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(4, 7), RecoveryRate = 5 });
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(7, 7), RecoveryRate = 2 });
+            energyStations.Add(new EnergyStation() { Energy = 0, Position = new Position(6, 4), RecoveryRate = 2 });
+
+            robots.Add(new Robot.Common.Robot() { Position =  new Position(0, 0) });
+
+            IList<EnergyStation> filteredEnergyStations;
+
+            filteredEnergyStations = energyStationsUtil.FilterStationsOccupiedByMyOwnRobots(energyStations, movingRobot, robots);
+            Assert.Equal(filteredEnergyStations.Count, energyStations.Count);
+
+            robots.Add(new Robot.Common.Robot() { Position = energyStations[0].Position, OwnerName = "roma" });
+            robots.Add(new Robot.Common.Robot() { Position = energyStations[1].Position, OwnerName = "roma" });
+            filteredEnergyStations = energyStationsUtil.FilterStationsOccupiedByMyOwnRobots(energyStations, movingRobot, robots);
+            Assert.Equal(filteredEnergyStations.Count, energyStations.Count - 2);
         }
     }
 }

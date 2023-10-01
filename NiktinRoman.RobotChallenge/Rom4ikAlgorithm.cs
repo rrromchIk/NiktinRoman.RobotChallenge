@@ -1,11 +1,7 @@
 ﻿using NikitinRoman.RobotChallenge;
 using NiktinRoman.RobotChallenge;
 using Robot.Common;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace rom4ik.RobotChallange {
     public class Rom4ikAlgorithm : IRobotAlgorithm {
@@ -28,12 +24,12 @@ namespace rom4ik.RobotChallange {
             mapUtil = new MapUtil();
             distanceHelper = new DistanceHelper();
             energyStationsUtil = new EnergyStationsUtil(distanceHelper, mapUtil, 50);
-            robotsUtil = new RobotsUtil(energyStationsUtil, 60, 40, 700);
+            robotsUtil = new RobotsUtil(energyStationsUtil, distanceHelper,  70, 40, 600);
         }
 
         public RobotCommand DoStep(IList<Robot.Common.Robot> robots, int robotToMoveIndex, Map map) {
             var myRobot = robots[robotToMoveIndex];
-            Position topOneEnergyStationPosition = null;
+            Position topOnePositionToGo = null;
 
             if (energyStationsUtil.IsRobotOnTheStation(map.Stations, myRobot)) {
                 //If robot is on the station
@@ -49,7 +45,7 @@ namespace rom4ik.RobotChallange {
             } else {
                 //If robot is not on the station
                 //Searching all reachable stations in given radius 
-                int radius = myRobot.Energy < 300 ? 100 : 300;
+                int radius = myRobot.Energy < 300 ? 100 : 200;
                 IList<EnergyStation> stationsInRadius = energyStationsUtil.FindAllReachableStationsInGivenRadius(
                                                                                 map,
                                                                                 radius,
@@ -63,24 +59,28 @@ namespace rom4ik.RobotChallange {
                                                                                 myRobot);
 
                 //Filter to not kick our robot
-                IList<EnergyStation> filteredStations = energyStationsUtil.FilterStationsOccupiedByMyOwnRobots(
+                IList<EnergyStation> notOccupied = energyStationsUtil.FilterStationsOccupiedByMyOwnRobots(
                                                                                 topStations,
                                                                                 myRobot,
                                                                                 robots);
-                
-                if (filteredStations.Count == 0) {
-                    //Console.WriteLine("No stations in reachable radius");
-                    //return new MoveCommand() {
-                    //    NewPosition = new Position(myRobot.Position.X + 1, myRobot.Position.Y + 1)
-                    //};
+                Robot.Common.Robot robotToAttack = robotsUtil.RobotToAttackInReachableRadius(myRobot, notOccupied, robots);
 
-                    //хуйово буде
+                if(robotToAttack != null) {
+                    topOnePositionToGo = robotToAttack.Position;
+                } else {
+                    if (notOccupied.Count == 0) {
+                        //Console.WriteLine("No stations in reachable radius");
+                        //return new MoveCommand() {
+                        //    NewPosition = new Position(myRobot.Position.X + 1, myRobot.Position.Y + 1)
+                        //};
+
+                        //погано буде
+                    }
+
+                    topOnePositionToGo = notOccupied[0].Position;
                 }
-
-                topOneEnergyStationPosition = filteredStations[0].Position;
             }
-
-            return new MoveCommand() { NewPosition = topOneEnergyStationPosition }; 
+            return new MoveCommand() { NewPosition = topOnePositionToGo }; 
         }
     }
 }
