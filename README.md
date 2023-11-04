@@ -25,10 +25,10 @@ This project challenges you to create an algorithm that controls robots' movemen
 Describe your algorithm's logic and strategy. Explain how your algorithm makes decisions about robot movements, resource collection, and creating new robots. Detail any unique features or strategies that set your algorithm apart.
 
 ## Results
+
 ![image](https://github.com/rrromchIk/NiktinRoman.RobotChallenge/assets/90086332/2402d5c1-c935-45b0-974d-c56211ddbc06)
 
 ---
-
 ![image](https://github.com/rrromchIk/NiktinRoman.RobotChallenge/assets/90086332/cd115f83-b574-4944-a21d-50cedadf82de)
 
 
