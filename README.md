@@ -26,10 +26,9 @@ Describe your algorithm's logic and strategy. Explain how your algorithm makes d
 
 ## Results
 
-![image](https://github.com/rrromchIk/NiktinRoman.RobotChallenge/assets/90086332/2402d5c1-c935-45b0-974d-c56211ddbc06)
+![image](https://github.com/rrromchIk/NiktinRoman.RobotChallenge/assets/90086332/789b0b0f-c58a-48ab-8c32-078920bed705)
 
 ---
-![image](https://github.com/rrromchIk/NiktinRoman.RobotChallenge/assets/90086332/cd115f83-b574-4944-a21d-50cedadf82de)
-
+![image](https://github.com/rrromchIk/NiktinRoman.RobotChallenge/assets/90086332/80b56805-2595-4e7a-8d70-9a169f951ca1)
 
 
